@@ -20,7 +20,7 @@ class User < ActiveRecord::Base
   has_many :have_items , through: :haves, source: :item
 
 
-  # 他のユーザーをフォローする
+  
   def follow(other_user)
     following_relationships.create(followed_id: other_user.id)
   end
@@ -34,30 +34,31 @@ class User < ActiveRecord::Base
   end
 
   ## TODO 実装
-  def have(item)
-  following_ownerships.have_or_want_by(user_id: other_item.id)
-  end
-
-  def unhave(item)
-    following_ownerships = following_ownerships.find_by(user_id: other_item.id)
-    following_ownerships.destroy if following_ownerships
-  end
-
-  def have?(item)
-    following_users.include?(other_user)
-  end
-
   def want(item)
-     following_ownerships.have_or_want_by(item_id: other)
+  wants.find_or_create_by(item_id: item.id)
   end
-
-  def unwant(item)
-    following_ownerships = following_ownerships.find_by(item_id: other_user.id)
-    following_ownerships.destroy if following_ownerships
+  
+  def unwant (item)
+     wants.find_by(item_id: item.id).destroy
   end
 
   def want?(item)
-     following_users.include?(other_user)
+     want_items.include?(item)
+  end
+
+  
+
+  def have(item)
+     haves.find_or_create_by(item_id: item.id)
+  end
+
+  
+  def unhave(item)
+     haves.find_by(item_id: item.id).destroy
+  end
+  
+  def have?(item)
+    have_items.include?(item)
   end
 end
 
